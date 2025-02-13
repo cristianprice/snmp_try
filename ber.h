@@ -1,67 +1,66 @@
 /***************************************************************************
- 
+
 	   C Implementation of BER assembler/disassembler package.
-	      Minimum requirement for SNMPv1/v2 implementation.
- 
-		    Christophe MEESSEN (CPPM - IN2P3)
-			     18 feb 1994
- 
+		  Minimum requirement for SNMPv1/v2 implementation.
+
+			Christophe MEESSEN (CPPM - IN2P3)
+				 18 feb 1994
+
  Permission to use, copy,  modify and distribute this software and it's docu-
  mentation for any purpose and  without fee is hereby granted,  provided that
  this notice remain part of the source files. This package is provided as is,
  without any support.
- 
-	       Corrections and enhancements are welcome.
-	       Author's address: meessen@marina.in2p3.fr
- 
+
+		   Corrections and enhancements are welcome.
+		   Author's address: meessen@marina.in2p3.fr
+
  ****************************************************************************/
- 
+
 #ifndef __BER__
 #define __BER__
- 
+
 /* -- various type tags used in SNMP -- */
- 
+
 /* -- Tag class encoding -- */
-#define UNIVERSAL         0x00
-#define APPLICATION       0x40
-#define CONTEXTSPECIFIC   0x80
-#define PRIVATE           0xC0
- 
+#define UNIVERSAL 0x00
+#define APPLICATION 0x40
+#define CONTEXTSPECIFIC 0x80
+#define PRIVATE 0xC0
+
 /* -- Tag primitive/contructed form -- */
-#define PRIMITIVE         0x00
-#define CONSTRUCT         0x20
- 
+#define PRIMITIVE 0x00
+#define CONSTRUCT 0x20
+
 /* -- SNMP Tags -- */
-#define INTEGER_tag          ( UNIVERSAL   | PRIMITIVE | 0x02 )
-#define OCTET_STRING_tag     ( UNIVERSAL   | PRIMITIVE | 0x04 )
-#define NULL_tag             ( UNIVERSAL   | PRIMITIVE | 0x05 )
-#define OBJECT_ID_tag        ( UNIVERSAL   | PRIMITIVE | 0x06 )
-#define SEQUENCE_tag         ( UNIVERSAL   | CONSTRUCT | 0x10 )
-#define SET_OF_tag           ( UNIVERSAL   | CONSTRUCT | 0x11 )
- 
-#define IPADDRESS_tag        ( APPLICATION | PRIMITIVE | 0x00 )
-#define COUNTER32_tag        ( APPLICATION | PRIMITIVE | 0x01 )
-#define GAUGE32_tag          ( APPLICATION | PRIMITIVE | 0x02 )
-#define TIMETICKS_tag        ( APPLICATION | PRIMITIVE | 0x03 )
-#define OPAQUE_tag           ( APPLICATION | PRIMITIVE | 0x04 )
-#define NSAP_tag             ( APPLICATION | PRIMITIVE | 0x05 )
-#define COUNTER64_tag        ( APPLICATION | PRIMITIVE | 0x06 )
-#define UINTEGER32_tag       ( APPLICATION | PRIMITIVE | 0x07 )
- 
-#define GET_cmd              ( CONTEXTSPECIFIC | CONSTRUCT | 0x00 )
-#define GET_NEXT_cmd         ( CONTEXTSPECIFIC | CONSTRUCT | 0x01 )
-#define RESPONSE_cmd         ( CONTEXTSPECIFIC | CONSTRUCT | 0x02 )
-#define SET_cmd              ( CONTEXTSPECIFIC | CONSTRUCT | 0x03 )
-#define TRAP_V1_cmd          ( CONTEXTSPECIFIC | CONSTRUCT | 0x04 )
-#define GET_BULK_cmd         ( CONTEXTSPECIFIC | CONSTRUCT | 0x05 )
-#define INFORM_cmd           ( CONTEXTSPECIFIC | CONSTRUCT | 0x06 )
-#define TRAP_V2_cmd          ( CONTEXTSPECIFIC | CONSTRUCT | 0x07 )
- 
-#define NoSuchObject_tag     ( CONTEXTSPECIFIC | PRIMITIVE | 0x00 )
-#define NoSuchInstance_tag   ( CONTEXTSPECIFIC | PRIMITIVE | 0x01 )
-#define EndOfMibView_tag     ( CONTEXTSPECIFIC | PRIMITIVE | 0x02 )
- 
- 
+#define INTEGER_tag (UNIVERSAL | PRIMITIVE | 0x02)
+#define OCTET_STRING_tag (UNIVERSAL | PRIMITIVE | 0x04)
+#define NULL_tag (UNIVERSAL | PRIMITIVE | 0x05)
+#define OBJECT_ID_tag (UNIVERSAL | PRIMITIVE | 0x06)
+#define SEQUENCE_tag (UNIVERSAL | CONSTRUCT | 0x10)
+#define SET_OF_tag (UNIVERSAL | CONSTRUCT | 0x11)
+
+#define IPADDRESS_tag (APPLICATION | PRIMITIVE | 0x00)
+#define COUNTER32_tag (APPLICATION | PRIMITIVE | 0x01)
+#define GAUGE32_tag (APPLICATION | PRIMITIVE | 0x02)
+#define TIMETICKS_tag (APPLICATION | PRIMITIVE | 0x03)
+#define OPAQUE_tag (APPLICATION | PRIMITIVE | 0x04)
+#define NSAP_tag (APPLICATION | PRIMITIVE | 0x05)
+#define COUNTER64_tag (APPLICATION | PRIMITIVE | 0x06)
+#define UINTEGER32_tag (APPLICATION | PRIMITIVE | 0x07)
+
+#define GET_cmd (CONTEXTSPECIFIC | CONSTRUCT | 0x00)
+#define GET_NEXT_cmd (CONTEXTSPECIFIC | CONSTRUCT | 0x01)
+#define RESPONSE_cmd (CONTEXTSPECIFIC | CONSTRUCT | 0x02)
+#define SET_cmd (CONTEXTSPECIFIC | CONSTRUCT | 0x03)
+#define TRAP_V1_cmd (CONTEXTSPECIFIC | CONSTRUCT | 0x04)
+#define GET_BULK_cmd (CONTEXTSPECIFIC | CONSTRUCT | 0x05)
+#define INFORM_cmd (CONTEXTSPECIFIC | CONSTRUCT | 0x06)
+#define TRAP_V2_cmd (CONTEXTSPECIFIC | CONSTRUCT | 0x07)
+
+#define NoSuchObject_tag (CONTEXTSPECIFIC | PRIMITIVE | 0x00)
+#define NoSuchInstance_tag (CONTEXTSPECIFIC | PRIMITIVE | 0x01)
+#define EndOfMibView_tag (CONTEXTSPECIFIC | PRIMITIVE | 0x02)
+
 /*___________________________________________________________________________
  |                                                                           |
  |                     BER integer internal representation.                  |
@@ -86,19 +85,18 @@
  |   a sid (sub-identifier) is mapped into an unsigned long.                 |
  |___________________________________________________________________________|
 */
- 
+
 typedef unsigned long nat32;
-typedef long          int32;
+typedef long int32;
 typedef unsigned long nat64[2];
 typedef unsigned long sid;
- 
+
 /* -- utility definition -- */
-typedef unsigned long  ulong;
-typedef unsigned int   uint;
+typedef unsigned long ulong;
+typedef unsigned int uint;
 typedef unsigned short ushort;
-typedef unsigned char  uchar;
- 
- 
+typedef unsigned char uchar;
+
 /*___________________________________________________________________________
  |                                                                           |
  |                     BER disassembling functions                           |
@@ -138,19 +136,18 @@ typedef unsigned char  uchar;
  |             identifier list B or sid list A equal sid list B.             |
  |___________________________________________________________________________|
 */
- 
-uchar* parse_tag  ( register uchar* x, register uchar* p );
-uchar* parse_len  ( register uint*  x, register uchar* p );
-uchar* parse_sid  ( register sid*   x, register uchar* p );
-uchar* parse_dat  ( register uchar* x, register uint l, register uchar* p );
-uchar* parse_nat32( register nat32* x, register uchar* p );
-uchar* parse_int32( register int32* x, register uchar* p );
-uchar* parse_nat64( register nat64  x, register uchar* p );
-uchar* parse_oct  ( register uchar* x, register uint* l, register uchar* p );
-ulong  number_sid ( register uchar* p, register uint l );
-int isObjectOf( uchar *a, uint al, uchar *b, uint bl );
- 
- 
+
+uchar *parse_tag(register uchar *x, register uchar *p);
+uchar *parse_len(register uint *x, register uchar *p);
+uchar *parse_sid(register sid *x, register uchar *p);
+uchar *parse_dat(register uchar *x, register uint l, register uchar *p);
+uchar *parse_nat32(register nat32 *x, register uchar *p);
+uchar *parse_int32(register int32 *x, register uchar *p);
+uchar *parse_nat64(register nat64 x, register uchar *p);
+uchar *parse_oct(register uchar *x, register uint *l, register uchar *p);
+ulong number_sid(register uchar *p, register uint l);
+int isObjectOf(uchar *a, uint al, uchar *b, uint bl);
+
 /*___________________________________________________________________________
  |                                                                           |
  |                        BER assembling functions                           |
@@ -198,19 +195,19 @@ int isObjectOf( uchar *a, uint al, uchar *b, uint bl );
  |                  length l.                                                |
  |___________________________________________________________________________|
 */
- 
-uchar* build_tag  ( register uchar  x, register uchar* p );
-uchar* build_len  ( register uint   x, register uchar* p );
-uchar* build_sid  ( register sid    x, register uchar* p );
-uchar* build_dat  ( register uchar* x, register uint l, register uchar* p );
-uchar* build_nat32( register nat32  x, register uchar* p );
-uchar* build_int32( register int32  x, register uchar* p );
-uchar* build_nat64( register nat64  x, register uchar* p );
-uchar* build_oct  ( register uchar* x, register uint  l, register uchar* p );
-uchar* build_oid  ( register ulong* x, register uint  l, register uchar* p );
-int spaceFor_lentag( register uchar* buf, register uchar* p, register uint l );
-int spaceFor_int32 ( register uchar* buf, register uchar* p);
-int spaceFor_nat64 ( register uchar* buf, register uchar* p);
-int spaceFor_oct   ( register uchar* buf, register uchar* p, register uint l );
- 
-#endif  __BER__
+
+uchar *build_tag(register uchar x, register uchar *p);
+uchar *build_len(register uint x, register uchar *p);
+uchar *build_sid(register sid x, register uchar *p);
+uchar *build_dat(register uchar *x, register uint l, register uchar *p);
+uchar *build_nat32(register nat32 x, register uchar *p);
+uchar *build_int32(register int32 x, register uchar *p);
+uchar *build_nat64(register nat64 x, register uchar *p);
+uchar *build_oct(register uchar *x, register uint l, register uchar *p);
+uchar *build_oid(register ulong *x, register uint l, register uchar *p);
+int spaceFor_lentag(register uchar *buf, register uchar *p, register uint l);
+int spaceFor_int32(register uchar *buf, register uchar *p);
+int spaceFor_nat64(register uchar *buf, register uchar *p);
+int spaceFor_oct(register uchar *buf, register uchar *p, register uint l);
+
+#endif

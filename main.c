@@ -1,11 +1,11 @@
 #include "ber.h"
-#include <cstring>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-void bcopy(char *src, char *dst, int nbytes)
-{
-    memcpy(dst, src, nbytes);
-}
+
 
 void main()
 {
+    printf("Hello, World!\n");
 }
